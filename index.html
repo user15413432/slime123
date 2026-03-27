@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SLIME123 | Artisan Slime Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Space Grotesk', 'sans-serif'],
+                        display: ['Syne', 'sans-serif'],
+                    },
+                    colors: {
+                        'slime-pink': '#FF9ECD',
+                        'slime-green': '#A3E635',
+                        'slime-blue': '#60A5FA',
+                        'slime-purple': '#C084FC',
+                        'slime-yellow': '#FDE047',
+                        'dark-bg': '#0F0F11',
+                        'card-bg': '#1A1A1E'
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'blob': 'blob 7s infinite',
+                        'wiggle': 'wiggle 1s ease-in-out infinite',
+                        'pop': 'pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        wiggle: {
+                            '0%, 100%': { transform: 'rotate(-3deg)' },
+                            '50%': { transform: 'rotate(3deg)' },
+                        },
+                        pop: {
+                            '0%': { transform: 'scale(0.8)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #0F0F11;
+            color: #ffffff;
+            overflow-x: hidden;
+            cursor: none; /* Custom cursor */
+        }
+
+        /* Custom Cursor */
+        #cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            transition: transform 0.1s ease;
+        }
+        #cursor-follower {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transition: transform 0.3s ease;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0F0F11;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Glitch Effect */
+        .glitch-wrapper {
+            position: relative;
+        }
+        .glitch::before, .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .glitch::before {
+            left: 2px;
+            text-shadow: -1px 0 #ff00c1;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
+        }
+        .glitch::after {
+            left: -2px;
+            text-shadow: -1px 0 #00fff9;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim2 5s infinite linear alternate-reverse;
+        }
+        @keyframes glitch-anim {
+            0% { clip: rect(30px, 9999px, 10px, 0); }
+            20% { clip: rect(80px, 9999px, 90px, 0); }
+            40% { clip: rect(10px, 9999px, 50px, 0); }
+            60% { clip: rect(40px, 9999px, 20px, 0); }
+            80% { clip: rect(70px, 9999px, 60px, 0); }
+            100% { clip: rect(20px, 9999px, 80px, 0); }
+        }
+        @keyframes glitch-anim2 {
+            0% { clip: rect(10px, 9999px, 80px, 0); }
+            20% { clip: rect(60px, 9999px, 10px, 0); }
+            40% { clip: rect(90px, 9999px, 30px, 0); }
+            60% { clip: rect(20px, 9999px, 70px, 0); }
+            80% { clip: rect(50px, 9999px, 40px, 0); }
+            100% { clip: rect(80px, 9999px, 20px, 0); }
+        }
+
+        /* Card Hover 3D */
+        .product-card {
+            transition: transform 0.1s;
+            transform-style: preserve-3d;
+        }
+        
+        /* Slime Texture Background */
+        .slime-bg {
+            background: radial-gradient(circle at 50% 50%, rgba(163, 230, 53, 0.1) 0%, rgba(15, 15, 17, 0) 50%);
+        }
+
+        /* Marquee */
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .marquee-content {
+            display: inline-block;
+            animation: marquee 20s linear infinite;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Loader */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: #0F0F11;
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+        .loader-slime {
+            width: 100px;
+            height: 100px;
+            background: #A3E635;
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            animation: slime-morph 2s ease-in-out infinite;
+        }
+        @keyframes slime-morph {
+            0%, 100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; transform: rotate(0deg); }
+            50% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; transform: rotate(180deg); }
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-slime-green selection:text-black">
+
+    <!-- Custom Cursor -->
+    <div id="cursor"></div>
+    <div id="cursor-follower"></div>
+
+    <!-- Loader -->
+    <div id="loader">
+        <div class="loader-slime"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 top-0 left-0 px-6 py-4 mix-blend-difference text-white flex justify-between items-center backdrop-blur-sm bg-black/10 border-b border-white/10">
+        <div class="text-3xl font-display font-bold tracking-tighter hover-trigger" data-cursor="hover">
+            SLIME123<span class="text-slime-green">.</span>
+        </div>
+        <div class="hidden md:flex space-x-8 font-medium text-sm tracking-widest uppercase">
+            <a href="#shop" class="hover:text-slime-green transition-colors hover-trigger" data-cursor="hover">Shop</a>
+            <a href="#texture" class="hover:text-slime-green transition-colors hover-trigger" data-cursor="hover">Textures</a>
+            <a href="#about" class="hover:text-slime-green transition-colors hover-trigger" data-cursor="hover">Lab</a>
+        </div>
+        <div class="flex items-center space-x-6">
+            <button class="hover:text-slime-green transition-colors hover-trigger" data-cursor="hover">
+                <i class="fas fa-search text-lg"></i>
+            </button>
+            <button class="relative hover:text-slime-green transition-colors hover-trigger" data-cursor="hover" onclick="toggleCart()">
+                <i class="fas fa-shopping-bag text-lg"></i>
+                <span id="cart-count" class="absolute -top-2 -right-2 bg-slime-green text-black text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center transform scale-0 transition-transform duration-300">0</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+        <!-- Animated Blobs Background -->
+        <div class="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
+            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-slime-green/20 rounded-full mix-blend-screen filter blur-3xl opacity-70 animate-blob"></div>
+            <div class="absolute top-1/3 right-1/4 w-96 h-96 bg-slime-pink/20 rounded-full mix-blend-screen filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
+            <div class="absolute -bottom-8 left-1/2 w-96 h-96 bg-slime-blue/20 rounded-full mix-blend-screen filter blur-3xl opacity-70 animate-blob animation-delay-4000"></div>
+        </div>
+
+        <div class="container mx-auto px-6 text-center">
+            <div class="space-y-8 z-10 max-w-4xl mx-auto">
+                <div class="inline-block px-4 py-1 border border-slime-green/30 rounded-full bg-slime-green/5 backdrop-blur-md">
+                    <span class="text-slime-green text-xs font-bold tracking-widest uppercase">New Drop: Cyber Slime</span>
+                </div>
+                <h1 class="text-6xl md:text-8xl font-display font-bold leading-none glitch-wrapper">
+                    <span class="glitch block" data-text="FEEL THE">FEEL THE</span>
+                    <span class="glitch block text-transparent bg-clip-text bg-gradient-to-r from-slime-green via-slime-blue to-slime-pink" data-text="SQUISH">SQUISH</span>
+                </h1>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto leading-relaxed">
+                    Hand-crafted, sensory-rich slimes designed for the digital age. Experience textures that defy physics and colors that pop in the dark.
+                </p>
+                <div class="flex justify-center space-x-4">
+                    <button onclick="scrollToShop()" class="group relative px-8 py-4 bg-white text-black font-bold rounded-full overflow-hidden hover-trigger" data-cursor="hover">
+                        <span class="relative z-10 group-hover:text-white transition-colors duration-300">SHOP COLLECTION</span>
+                        <div class="absolute inset-0 bg-slime-green transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 ease-out"></div>
+                    </button>
+                    <button class="w-14 h-14 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 transition-colors hover-trigger" data-cursor="hover">
+                        <i class="fas fa-play ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Shipping Banner -->
+    <div class="py-4 bg-slime-green text-black font-display font-bold text-center text-lg border-y-4 border-black">
+        <i class="fas fa-truck mr-2"></i> FREE SHIPPING TO PLOIESTI ONLY
+    </div>
+
+    <!-- Marquee -->
+    <div class="py-8 bg-black text-white font-display font-bold text-4xl border-y border-white/10">
+        <div class="marquee-container">
+            <div class="marquee-content">
+                SQUISHY • STRETCHY • SATISFYING • ASMR • TEXTURE • GLOSSY • BUTTER • FLOAM • SQUISHY • STRETCHY • SATISFYING • ASMR • TEXTURE • GLOSSY • BUTTER • FLOAM •
+            </div>
+        </div>
+    </div>
+
+    <!-- Shop Section -->
+    <section id="shop" class="py-24 px-6 relative">
+        <div class="container mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-16">
+                <div>
+                    <h2 class="text-5xl font-display font-bold mb-4">THE COLLECTION</h2>
+                    <p class="text-gray-400">Curated sensory experiences. Limited batches.</p>
+                </div>
+                
+                <!-- Filters -->
+                <div class="flex space-x-2 mt-6 md:mt-0 overflow-x-auto pb-2 md:pb-0">
+                    <button class="filter-btn active px-6 py-2 rounded-full border border-white/20 hover:bg-white hover:text-black transition-all text-sm font-bold" data-filter="all" onclick="filterProducts('all')">ALL</button>
+                    <button class="filter-btn px-6 py-2 rounded-full border border-white/20 hover:bg-slime-green hover:text-black hover:border-slime-green transition-all text-sm font-bold" data-filter="glossy" onclick="filterProducts('glossy')">GLOSSY</button>
+                    <button class="filter-btn px-6 py-2 rounded-full border border-white/20 hover:bg-slime-blue hover:text-black hover:border-slime-blue transition-all text-sm font-bold" data-filter="butter" onclick="filterProducts('butter')">BUTTER</button>
+                    <button class="filter-btn px-6 py-2 rounded-full border border-white/20 hover:bg-slime-pink hover:text-black hover:border-slime-pink transition-all text-sm font-bold" data-filter="crunchy" onclick="filterProducts('crunchy')">CRUNCHY</button>
+                </div>
+            </div>
+
+            <!-- Product Grid -->
+            <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Products injected via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Texture Lab Section -->
+    <section id="texture" class="py-24 bg-card-bg relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-slime-purple/10 to-transparent pointer-events-none"></div>
+        
+        <div class="container mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+            <div class="order-2 md:order-1 relative">
+                <div class="aspect-[4/5] rounded-2xl overflow-hidden relative group">
+                    <img src="https://images.unsplash.com/photo-1534234828563-0253171e5e22?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Texture" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <span class="text-2xl font-display font-bold border-2 border-white px-8 py-3 rounded-full">PLAY VIDEO</span>
+                    </div>
+                </div>
+                <!-- Decorative circles -->
+                <div class="absolute -z-10 top-10 -left-10 w-40 h-40 border border-white/10 rounded-full"></div>
+                <div class="absolute -z-10 bottom-10 -right-10 w-60 h-60 border border-white/10 rounded-full"></div>
+            </div>
+            
+            <div class="order-1 md:order-2 space-y-8">
+                <div class="inline-flex items-center space-x-2 text-slime-purple font-bold tracking-widest text-sm">
+                    <span class="w-8 h-[1px] bg-slime-purple"></span>
+                    <span>THE SCIENCE</span>
+                </div>
+                <h2 class="text-5xl font-display font-bold leading-tight">PERFECTED<br>ELASTICITY</h2>
+                <p class="text-gray-400 text-lg leading-relaxed">
+                    Our slimes are engineered with a unique polymer ratio that allows for maximum stretch without tearing. Infused with cosmetic-grade pigments and skin-safe scents.
+                </p>
+                
+                <div class="grid grid-cols-2 gap-6 pt-4">
+                    <div class="p-6 rounded-xl bg-white/5 border border-white/10 hover:border-slime-purple/50 transition-colors">
+                        <i class="fas fa-leaf text-2xl text-slime-green mb-4"></i>
+                        <h3 class="font-bold text-lg mb-2">Non-Toxic</h3>
+                        <p class="text-sm text-gray-500">Safe for all ages. Borax-free options available.</p>
+                    </div>
+                    <div class="p-6 rounded-xl bg-white/5 border border-white/10 hover:border-slime-blue/50 transition-colors">
+                        <i class="fas fa-recycle text-2xl text-slime-blue mb-4"></i>
+                        <h3 class="font-bold text-lg mb-2">Reusable</h3>
+                        <p class="text-sm text-gray-500">Store in airtight containers for endless play.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black border-t border-white/10 pt-20 pb-10 px-6">
+        <div class="container mx-auto">
+            <div class="grid md:grid-cols-4 gap-12 mb-16">
+                <div class="col-span-1 md:col-span-2">
+                    <div class="text-4xl font-display font-bold mb-6">SLIME123.</div>
+                    <p class="text-gray-400 max-w-sm mb-8">Redefining sensory play through high-quality, artisan slimes. Made with love and a little bit of science. Exclusively serving Ploiesti with free shipping.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-slime-green hover:text-black transition-all"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-slime-green hover:text-black transition-all"><i class="fab fa-tiktok"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-slime-green hover:text-black transition-all"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-6 text-slime-green">SHOP</h4>
+                    <ul class="space-y-4 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">All Slimes</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Best Sellers</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">New Arrivals</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Gift Cards</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-6 text-slime-green">HELP</h4>
+                    <ul class="space-y-4 text-gray-400">
+                        <li><span class="text-white">Free Shipping to Ploiesti Only</span></li>
+                        <li><a href="mailto:business.slime123@hotmail.com" class="hover:text-white transition-colors">business.slime123@hotmail.com</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Care Guide</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
+                <p>&copy; 2024 SLIME123 Slime Studio. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <span class="text-slime-green"><i class="fas fa-map-marker-alt mr-1"></i> Ploiesti, Romania</span>
+                    <a href="#" class="hover:text-white">Privacy Policy</a>
+                    <a href="#" class="hover:text-white">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Drawer -->
+    <div id="cart-drawer" class="fixed inset-y-0 right-0 w-full md:w-96 bg-card-bg shadow-2xl transform translate-x-full transition-transform duration-300 z-[60] flex flex-col border-l border-white/10">
+        <div class="p-6 border-b border-white/10 flex justify-between items-center bg-black/20">
+            <h2 class="text-2xl font-display font-bold">YOUR BAG</h2>
+            <button onclick="toggleCart()" class="text-gray-400 hover:text-white transition-colors hover-trigger" data-cursor="hover">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        
+        <div class="p-4 bg-slime-green/10 border-b border-white/10">
+            <div class="flex items-center text-slime-green text-sm font-bold">
+                <i class="fas fa-truck mr-2"></i>
+                <span>FREE SHIPPING TO PLOIESTI</span>
+            </div>
+        </div>
+        
+        <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-6">
+            <!-- Cart items injected here -->
+            <div class="text-center text-gray-500 mt-20">
+                <i class="fas fa-shopping-basket text-4xl mb-4 opacity-50"></i>
+                <p>Your bag is empty.</p>
+            </div>
+        </div>
+        
+        <div class="p-6 border-t border-white/10 bg-black/20">
+            <div class="flex justify-between mb-2 text-sm text-gray-400">
+                <span>Shipping</span>
+                <span class="text-slime-green">FREE (Ploiesti Only)</span>
+            </div>
+            <div class="flex justify-between mb-4 text-lg font-bold">
+                <span>Total</span>
+                <span id="cart-total">$0.00</span>
+            </div>
+            <button class="w-full py-4 bg-slime-green text-black font-bold rounded-full hover:bg-white transition-colors hover-trigger" data-cursor="hover">
+                CHECKOUT
+            </button>
+        </div>
+    </div>
+    
+    <!-- Overlay -->
+    <div id="overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[55] hidden opacity-0 transition-opacity duration-300" onclick="toggleCart()"></div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-white text-black px-6 py-3 rounded-full shadow-2xl flex items-center space-x-3 translate-y-20 opacity-0 transition-all duration-300 z-[70]">
+        <i class="fas fa-check-circle text-slime-green"></i>
+        <span class="font-bold" id="toast-message">Added to bag!</span>
+    </div>
+
+    <script>
+        // --- Data ---
+        const products = [
+            {
+                id: 1,
+                name: "Cosmic Ooze",
+                price: 24.00,
+                category: "glossy",
+                image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                color: "from-purple-500 to-blue-500"
+            },
+            {
+                id: 2,
+                name: "Toxic Waste",
+                price: 22.00,
+                category: "butter",
+                image: "https://images.unsplash.com/photo-1605218427368-35b0f996d614?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                color: "from-green-400 to-yellow-400"
+            },
+            {
+                id: 3,
+                name: "Bubblegum Pop",
+                price: 20.00,
+                category: "crunchy",
+                image: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                color: "from-pink-400 to-rose-500"
+            },
+            {
+                id: 4,
+                name: "Midnight Oil",
+                price: 26.00,
+                category: "glossy",
+                image: "https://images.unsplash.com/photo-1515462277126-2dd0c162007a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                color: "from-gray-700 to-black"
+            },
+            {
+                id: 5,
+                name: "Cotton Candy Cloud",
+                price: 21.00,
+                category: "butter",
+                image: "https://images.unsplash.com/photo-1502691876148-a84978e59af8?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                color: "from-blue-300 to-pink-300"
+            },
+            {
+                id: 6,
+                name: "Golden Hour",
+                price: 28.00,
+                category: "glossy",
+                image: "https://images.unsplash.com/photo-1564951434112-64d74cc2a2d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                color: "from-yellow-300 to-orange-400"
+            }
+        ];
+
+        let cart = [];
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Remove Loader
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                loader.style.opacity = '0';
+                setTimeout(() => loader.remove(), 500);
+            }, 1500);
+
+            renderProducts('all');
+            initCustomCursor();
+        });
+
+        // --- Custom Cursor Logic ---
+        function initCustomCursor() {
+            const cursor = document.getElementById('cursor');
+            const follower = document.getElementById('cursor-follower');
+            
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+                
+                // Delayed follower
+                setTimeout(() => {
+                    follower.style.left = e.clientX - 10 + 'px';
+                    follower.style.top = e.clientY - 10 + 'px';
+                }, 50);
+            });
+
+            // Hover effects for cursor
+            const triggers = document.querySelectorAll('.hover-trigger');
+            triggers.forEach(trigger => {
+                trigger.addEventListener('mouseenter', () => {
+                    const type = trigger.getAttribute('data-cursor');
+                    if (type === 'hover') {
+                        cursor.style.transform = 'scale(2)';
+                        follower.style.transform = 'scale(0.5)';
+                    } else if (type === 'view') {
+                        cursor.style.transform = 'scale(3)';
+                        cursor.style.mixBlendMode = 'normal';
+                        cursor.style.background = 'rgba(255,255,255,0.2)';
+                        cursor.style.backdropFilter = 'blur(2px)';
+                    }
+                });
+                
+                trigger.addEventListener('mouseleave', () => {
+                    cursor.style.transform = 'scale(1)';
+                    follower.style.transform = 'scale(1)';
+                    cursor.style.mixBlendMode = 'difference';
+                    cursor.style.background = 'white';
+                    cursor.style.backdropFilter = 'none';
+                });
+            });
+        }
+
+        // --- Product Rendering ---
+        function renderProducts(filter) {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = '';
+
+            const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
+
+            filtered.forEach((product, index) => {
+                const card = document.createElement('div');
+                card.className = 'product-card group relative bg-card-bg rounded-2xl overflow-hidden border border-white/5 hover:border-white/20 transition-all duration-300 hover:-translate-y-2';
+                card.style.animation = `pop 0.5s ease forwards ${index * 0.1}s`;
+                card.style.opacity = '0'; // Start hidden for animation
+
+                card.innerHTML = `
+                    <div class="relative aspect-[4/3] overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br ${product.color} opacity-20 group-hover:opacity-30 transition-opacity"></div>
+                        <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
+                        <button onclick="addToCart(${product.id})" class="absolute bottom-4 right-4 w-12 h-12 bg-white text-black rounded-full flex items-center justify-center transform translate-y-20 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 hover:bg-slime-green hover-trigger" data-cursor="hover">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <div class="absolute top-4 left-4 px-3 py-1 bg-black/50 backdrop-blur-md rounded-full text-xs font-bold uppercase tracking-wider border border-white/10">
+                            ${product.category}
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-bold font-display group-hover:text-slime-green transition-colors">${product.name}</h3>
+                            <span class="text-lg font-mono">$${product.price.toFixed(2)}</span>
+                        </div>
+                        <p class="text-gray-500 text-sm mb-4">8oz Jar • Scented • Non-Toxic</p>
+                        <div class="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r ${product.color} w-0 group-hover:w-full transition-all duration-700"></div>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // --- Filtering ---
+        function filterProducts(category) {
+            // Update buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if(btn.dataset.filter === category) {
+                    btn.classList.add('bg-white', 'text-black');
+                    btn.classList.remove('border-white/20');
+                } else {
+                    btn.classList.remove('bg-white', 'text-black');
+                    btn.classList.add('border-white/20');
+                }
+            });
+            renderProducts(category);
+        }
+
+        // --- Cart Logic ---
+        function toggleCart() {
+            const drawer = document.getElementById('cart-drawer');
+            const overlay = document.getElementById('overlay');
+            
+            if (drawer.classList.contains('translate-x-full')) {
+                drawer.classList.remove('translate-x-full');
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+            } else {
+                drawer.classList.add('translate-x-full');
+                overlay.classList.add('opacity-0');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            }
+        }
+
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            const existing = cart.find(item => item.id === id);
+            
+            if (existing) {
+                existing.quantity++;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+            
+            updateCartUI();
+            showToast(`Added ${product.name} to bag`);
+            
+            // Animate cart icon
+            const cartIcon = document.querySelector('.fa-shopping-bag');
+            cartIcon.parentElement.classList.add('animate-wiggle');
+            setTimeout(() => cartIcon.parentElement.classList.remove('animate-wiggle'), 1000);
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            updateCartUI();
+        }
+
+        function updateQuantity(id, change) {
+            const item = cart.find(item => item.id === id);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) removeFromCart(id);
+                else updateCartUI();
+            }
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cart-items');
+            const totalEl = document.getElementById('cart-total');
+            const countEl = document.getElementById('cart-count');
+            
+            // Update count badge
+            const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            countEl.innerText = totalCount;
+            if (totalCount > 0) {
+                countEl.classList.remove('scale-0');
+                countEl.classList.add('scale-100');
+            } else {
+                countEl.classList.remove('scale-100');
+                countEl.classList.add('scale-0');
+            }
+
+            // Render items
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-gray-500 mt-20">
+                        <i class="fas fa-shopping-basket text-4xl mb-4 opacity-50"></i>
+                        <p>Your bag is empty.</p>
+                    </div>
+                `;
+                totalEl.innerText = '$0.00';
+                return;
+            }
+
+            container.innerHTML = cart.map(item => `
+                <div class="flex gap-4 animate-pop">
+                    <div class="w-20 h-20 rounded-lg overflow-hidden bg-white/5 flex-shrink-0">
+                        <img src="${item.image}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-1 flex flex-col justify-between">
+                        <div>
+                            <h4 class="font-bold text-sm">${item.name}</h4>
+                            <p class="text-gray-500 text-xs">$${item.price.toFixed(2)}</p>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3 bg-white/5 rounded-full px-3 py-1">
+                                <button onclick="updateQuantity(${item.id}, -1)" class="text-xs hover:text-slime-green">-</button>
+                                <span class="text-xs font-bold w-4 text-center">${item.quantity}</span>
+                                <button onclick="updateQuantity(${item.id}, 1)" class="text-xs hover:text-slime-green">+</button>
+                            </div>
+                            <button onclick="removeFromCart(${item.id})" class="text-gray-500 hover:text-red-400 text-xs underline">Remove</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Calculate total
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            totalEl.innerText = '$' + total.toFixed(2);
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const msgEl = document.getElementById('toast-message');
+            msgEl.innerText = message;
+            
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        function scrollToShop() {
+            document.getElementById('shop').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
