@@ -27,9 +27,9 @@
   "url": "https://slime123.ddns.net/"
 }
 </script>
-    <script src="https://cdn.tailwindcss.com "></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css " rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300 ;500;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
@@ -265,7 +265,18 @@
             width: 100%;
             height: 100%;
         }
+        
+        /* Filter button active states */
+        .filter-btn {
+            transition: all 0.3s ease;
+        }
+        .filter-btn.active-filter {
+            background-color: white;
+            color: black;
+            border-color: white;
+        }
     </style>
+<base target="_blank">
 <base target="_blank">
 </head>
 <body class="antialiased selection:bg-slime-green selection:text-black">
@@ -368,7 +379,7 @@
                 
                 <!-- Filters -->
                 <div class="flex space-x-2 mt-6 md:mt-0 overflow-x-auto pb-2 md:pb-0">
-                    <button class="filter-btn active px-6 py-2 rounded-full border border-white/20 hover:bg-white hover:text-black transition-all text-sm font-bold hover-trigger" data-cursor="hover" data-filter="all" onclick="filterProducts('all')" data-key="filter_all">ALL</button>
+                    <button class="filter-btn active-filter px-6 py-2 rounded-full border border-white/20 hover:bg-white hover:text-black transition-all text-sm font-bold hover-trigger" data-cursor="hover" data-filter="all" onclick="filterProducts('all')" data-key="filter_all">ALL</button>
                     <button class="filter-btn px-6 py-2 rounded-full border border-white/20 hover:bg-slime-green hover:text-black hover:border-slime-green transition-all text-sm font-bold hover-trigger" data-cursor="hover" data-filter="glossy" onclick="filterProducts('glossy')" data-key="filter_glossy">GLOSSY</button>
                     <button class="filter-btn px-6 py-2 rounded-full border border-white/20 hover:bg-slime-blue hover:text-black hover:border-slime-blue transition-all text-sm font-bold hover-trigger" data-cursor="hover" data-filter="butter" onclick="filterProducts('butter')" data-key="filter_butter">BUTTER</button>
                     <button class="filter-btn px-6 py-2 rounded-full border border-white/20 hover:bg-slime-pink hover:text-black hover:border-slime-pink transition-all text-sm font-bold hover-trigger" data-cursor="hover" data-filter="crunchy" onclick="filterProducts('crunchy')" data-key="filter_crunchy">CRUNCHY</button>
@@ -390,7 +401,7 @@
         <div class="container mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
             <div class="order-2 md:order-1 relative">
                 <div class="aspect-[4/5] rounded-2xl overflow-hidden relative group">
-                    <img src="https://images.unsplash.com/photo-1534234828563-0253171e5e22?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80 " alt="Texture" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <img src="https://images.unsplash.com/photo-1534234828563-0253171e5e22?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Texture" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                     <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                         <span class="text-2xl font-display font-bold border-2 border-white px-8 py-3 rounded-full hover-trigger" data-cursor="hover" data-key="play_video">PLAY VIDEO</span>
                     </div>
@@ -637,7 +648,7 @@
                 name_ro: "Deșeu Toxic",
                 price: 22.00,
                 category: "butter",
-                image: "https://images.unsplash.com/photo-1605218427368-35b0f996d614?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80 ",
+                image: "https://images.unsplash.com/photo-1605218427368-35b0f996d614?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
                 color: "from-green-400 to-yellow-400",
                 description: "8oz Jar • Lime Scented • Butter Texture",
                 description_ro: "Borcan 8oz • Aromă Lime • Textură Unt"
@@ -648,7 +659,7 @@
                 name_ro: "Bubblegum Pop",
                 price: 20.00,
                 category: "crunchy",
-                image: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80 ",
+                image: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
                 color: "from-pink-400 to-rose-500",
                 description: "8oz Jar • Bubblegum Scented • Crunchy Beads",
                 description_ro: "Borcan 8oz • Aromă Gumă de Mestecat • Biluțe Crocante"
@@ -659,7 +670,7 @@
                 name_ro: "Ulei de Miezul Nopții",
                 price: 26.00,
                 category: "glossy",
-                image: "https://images.unsplash.com/photo-1515462277126-2dd0c162007a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80 ",
+                image: "https://images.unsplash.com/photo-1515462277126-2dd0c162007a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
                 color: "from-gray-700 to-black",
                 description: "8oz Jar • Midnight Musk • High Gloss",
                 description_ro: "Borcan 8oz • Mosc de Miezul Nopții • Luciu Intens"
@@ -670,7 +681,7 @@
                 name_ro: "Nor de Vată de Zahar",
                 price: 21.00,
                 category: "butter",
-                image: "https://images.unsplash.com/photo-1502691876148-a84978e59af8?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80 ",
+                image: "https://images.unsplash.com/photo-1502691876148-a84978e59af8?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
                 color: "from-blue-300 to-pink-300",
                 description: "8oz Jar • Cotton Candy Scent • Soft Butter",
                 description_ro: "Borcan 8oz • Aromă Vată de Zahar • Unt Moale"
@@ -681,7 +692,7 @@
                 name_ro: "Ora de Aur",
                 price: 28.00,
                 category: "glossy",
-                image: "https://images.unsplash.com/photo-1564951434112-64d74cc2a2d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80 ",
+                image: "https://images.unsplash.com/photo-1564951434112-64d74cc2a2d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
                 color: "from-yellow-300 to-orange-400",
                 description: "8oz Jar • Citrus Scented • Metallic Shine",
                 description_ro: "Borcan 8oz • Aromă Citrice • Strălucire Metalică"
@@ -755,7 +766,7 @@
             }
             
             updateLanguage();
-            renderProducts(document.querySelector('.filter-btn.active')?.dataset.filter || 'all');
+            renderProducts(document.querySelector('.filter-btn.active-filter')?.dataset.filter || 'all');
             updateCartUI();
         }
 
@@ -845,12 +856,14 @@
         // --- Filtering ---
         function filterProducts(category) {
             document.querySelectorAll('.filter-btn').forEach(btn => {
+                // Remove active state from all buttons
+                btn.classList.remove('active-filter', 'bg-white', 'text-black');
+                btn.classList.add('border-white/20');
+                
+                // Add active state to selected button
                 if(btn.dataset.filter === category) {
-                    btn.classList.add('bg-white', 'text-black');
+                    btn.classList.add('active-filter', 'bg-white', 'text-black');
                     btn.classList.remove('border-white/20');
-                } else {
-                    btn.classList.remove('bg-white', 'text-black');
-                    btn.classList.add('border-white/20');
                 }
             });
             renderProducts(category);
