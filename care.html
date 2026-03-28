@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SLIME123 | Slime Care Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Space Grotesk', 'sans-serif'],
+                        display: ['Syne', 'sans-serif'],
+                    },
+                    colors: {
+                        'slime-pink': '#FF9ECD',
+                        'slime-green': '#A3E635',
+                        'slime-blue': '#60A5FA',
+                        'slime-purple': '#C084FC',
+                        'slime-yellow': '#FDE047',
+                        'slime-white': '#F5F5F7',
+                        'dark-bg': '#0F0F11',
+                        'card-bg': '#1A1A1E'
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'blob': 'blob 7s infinite',
+                        'wiggle': 'wiggle 1s ease-in-out infinite',
+                        'pop': 'pop 0.5s ease forwards',
+                        'pulse-slow': 'pulse 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        wiggle: {
+                            '0%, 100%': { transform: 'rotate(-3deg)' },
+                            '50%': { transform: 'rotate(3deg)' },
+                        },
+                        pop: {
+                            '0%': { transform: 'scale(0.8)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #0F0F11;
+            color: #ffffff;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        #cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            transition: transform 0.1s ease;
+        }
+        #cursor-follower {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transition: transform 0.3s ease;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0F0F11;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .toggle-switch.active {
+            background: #A3E635;
+        }
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: #0F0F11;
+        }
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(30px);
+        }
+        .lang-label {
+            font-size: 10px;
+            font-weight: bold;
+            margin-left: 8px;
+            color: white;
+        }
+
+        .care-card {
+            opacity: 0;
+            animation: pop 0.5s ease forwards;
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #A3E635 0%, #60A5FA 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tip-box {
+            border-left: 4px solid #A3E635;
+        }
+
+        .warning-box {
+            border-left: 4px solid #ef4444;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-slime-green selection:text-black">
+
+    <!-- Custom Cursor -->
+    <div id="cursor"></div>
+    <div id="cursor-follower"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 top-0 left-0 px-6 py-4 mix-blend-difference text-white flex justify-between items-center backdrop-blur-sm bg-black/10 border-b border-white/10">
+        <a href="index.html" class="text-3xl font-display font-bold tracking-tighter hover-trigger" data-cursor="hover">
+            SLIME123<span class="text-slime-green">.</span>
+        </a>
+        <div class="hidden md:flex space-x-8 font-medium text-sm tracking-widest uppercase">
+            <a href="index.html#shop" class="hover:text-slime-green transition-colors hover-trigger" data-cursor="hover" data-key="nav_shop">Shop</a>
+            <a href="index.html#texture" class="hover:text-slime-green transition-colors hover-trigger" data-cursor="hover" data-key="nav_textures">Textures</a>
+            <a href="care.html" class="text-slime-green hover-trigger" data-cursor="hover" data-key="nav_care">Care Guide</a>
+        </div>
+        <div class="flex items-center space-x-6">
+            <!-- Language Toggle -->
+            <div class="flex items-center">
+                <span class="lang-label" id="lang-label-en">EN</span>
+                <div class="toggle-switch hover-trigger" data-cursor="hover" id="lang-toggle" onclick="toggleLanguage()">
+                    <div class="toggle-slider">$</div>
+                </div>
+                <span class="lang-label" id="lang-label-ro" style="opacity: 0.5;">RO</span>
+            </div>
+            
+            <a href="index.html#shop" class="relative hover:text-slime-green transition-colors hover-trigger" data-cursor="hover">
+                <i class="fas fa-shopping-bag text-lg"></i>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative min-h-[60vh] flex items-center justify-center overflow-hidden pt-20">
+        <!-- Animated Blobs Background -->
+        <div class="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
+            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-slime-green/20 rounded-full mix-blend-screen filter blur-3xl opacity-70 animate-blob"></div>
+            <div class="absolute top-1/3 right-1/4 w-96 h-96 bg-slime-blue/20 rounded-full mix-blend-screen filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
+            <div class="absolute -bottom-8 left-1/2 w-96 h-96 bg-slime-purple/20 rounded-full mix-blend-screen filter blur-3xl opacity-70 animate-blob animation-delay-4000"></div>
+        </div>
+
+        <div class="container mx-auto px-6 text-center">
+            <div class="space-y-6 z-10 max-w-4xl mx-auto">
+                <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-slime-green/20 border border-slime-green/30 mb-4 animate-pulse-slow">
+                    <i class="fas fa-heart text-4xl text-slime-green"></i>
+                </div>
+                <h1 class="text-5xl md:text-7xl font-display font-bold leading-none" data-key="care_hero_title">
+                    SLIME CARE<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-slime-green via-slime-blue to-slime-purple">GUIDE</span>
+                </h1>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto leading-relaxed" data-key="care_hero_desc">
+                    Learn how to keep your slime fresh, stretchy, and satisfying for months to come. Proper care extends the life of your sensory experience.
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Quick Tips Banner -->
+    <div class="py-6 bg-slime-green/10 border-y border-slime-green/20">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-wrap justify-center gap-8 text-sm font-medium">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-temperature-low text-slime-green"></i>
+                    <span data-key="tip_temp">Room Temperature</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-hand-sparkles text-slime-blue"></i>
+                    <span data-key="tip_clean">Clean Hands</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-box text-slime-purple"></i>
+                    <span data-key="tip_airtight">Airtight Container</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-droplet text-slime-pink"></i>
+                    <span data-key="tip_hydration">Stay Hydrated</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Care Content -->
+    <main class="py-24 px-6">
+        <div class="container mx-auto max-w-6xl">
+            
+            <!-- Storage Section -->
+            <section class="mb-20 care-card" style="animation-delay: 0.1s;">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="order-2 md:order-1">
+                        <div class="inline-flex items-center space-x-2 text-slime-green font-bold tracking-widest text-sm mb-4">
+                            <span class="text-4xl step-number font-display">01</span>
+                        </div>
+                        <h2 class="text-4xl font-display font-bold mb-6" data-key="storage_title">PROPER STORAGE</h2>
+                        <p class="text-gray-400 text-lg leading-relaxed mb-6" data-key="storage_desc">
+                            Always keep your slime in an airtight container when not in use. Exposure to air will cause it to dry out and lose its stretchy texture. Store at room temperature away from direct sunlight.
+                        </p>
+                        <div class="tip-box bg-white/5 p-4 rounded-r-lg">
+                            <p class="text-sm text-gray-300" data-key="storage_tip">
+                                <i class="fas fa-lightbulb text-slime-yellow mr-2"></i>
+                                <strong>Pro Tip:</strong> Use the original container or a similar airtight jar. Avoid plastic bags as they can leak air over time.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="order-1 md:order-2">
+                        <div class="aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-slime-green/20 to-slime-blue/20 p-8 flex items-center justify-center">
+                            <i class="fas fa-box-open text-9xl text-white/20"></i>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Hydration Section -->
+            <section class="mb-20 care-card" style="animation-delay: 0.2s;">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <div class="aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-slime-blue/20 to-slime-purple/20 p-8 flex items-center justify-center">
+                            <i class="fas fa-droplet text-9xl text-white/20"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="inline-flex items-center space-x-2 text-slime-blue font-bold tracking-widest text-sm mb-4">
+                            <span class="text-4xl step-number font-display">02</span>
+                        </div>
+                        <h2 class="text-4xl font-display font-bold mb-6" data-key="hydration_title">REHYDRATION</h2>
+                        <p class="text-gray-400 text-lg leading-relaxed mb-6" data-key="hydration_desc">
+                            If your slime becomes stiff or sticky, it's time to rehydrate. Add a few drops of warm water or slime activator and knead thoroughly until the desired consistency returns.
+                        </p>
+                        <div class="tip-box bg-white/5 p-4 rounded-r-lg">
+                            <p class="text-sm text-gray-300" data-key="hydration_tip">
+                                <i class="fas fa-lightbulb text-slime-yellow mr-2"></i>
+                                <strong>Pro Tip:</strong> Start with 2-3 drops and add more as needed. Too much water can make slime runny.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Cleaning Section -->
+            <section class="mb-20 care-card" style="animation-delay: 0.3s;">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="order-2 md:order-1">
+                        <div class="inline-flex items-center space-x-2 text-slime-purple font-bold tracking-widest text-sm mb-4">
+                            <span class="text-4xl step-number font-display">03</span>
+                        </div>
+                        <h2 class="text-4xl font-display font-bold mb-6" data-key="cleaning_title">CLEAN HANDS, CLEAN SLIME</h2>
+                        <p class="text-gray-400 text-lg leading-relaxed mb-6" data-key="cleaning_desc">
+                            Always wash and dry your hands before playing with slime. Dirt, lint, and oils from your skin can contaminate the slime and affect its texture. This also prevents bacteria growth.
+                        </p>
+                        <div class="warning-box bg-red-500/10 p-4 rounded-r-lg">
+                            <p class="text-sm text-gray-300" data-key="cleaning_warning">
+                                <i class="fas fa-exclamation-triangle text-red-400 mr-2"></i>
+                                <strong>Warning:</strong> Never play with slime if your hands are dirty or greasy. It can ruin the slime permanently.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="order-1 md:order-2">
+                        <div class="aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-slime-purple/20 to-slime-pink/20 p-8 flex items-center justify-center">
+                            <i class="fas fa-hand-sparkles text-9xl text-white/20"></i>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Temperature Section -->
+            <section class="mb-20 care-card" style="animation-delay: 0.4s;">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <div class="aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-slime-yellow/20 to-slime-green/20 p-8 flex items-center justify-center">
+                            <i class="fas fa-temperature-half text-9xl text-white/20"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="inline-flex items-center space-x-2 text-slime-yellow font-bold tracking-widest text-sm mb-4">
+                            <span class="text-4xl step-number font-display">04</span>
+                        </div>
+                        <h2 class="text-4xl font-display font-bold mb-6" data-key="temp_title">TEMPERATURE MATTERS</h2>
+                        <p class="text-gray-400 text-lg leading-relaxed mb-6" data-key="temp_desc">
+                            Keep slime at room temperature (18-22°C). Extreme heat can melt it, while cold temperatures can make it hard and brittle. Never leave slime in a car or near heating sources.
+                        </p>
+                        <div class="tip-box bg-white/5 p-4 rounded-r-lg">
+                            <p class="text-sm text-gray-300" data-key="temp_tip">
+                                <i class="fas fa-lightbulb text-slime-yellow mr-2"></i>
+                                <strong>Pro Tip:</strong> If slime gets too cold, let it warm up to room temperature before playing. Don't microwave!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Texture Types Care -->
+            <section class="mb-20 care-card" style="animation-delay: 0.5s;">
+                <h2 class="text-4xl font-display font-bold text-center mb-12" data-key="texture_care_title">CARE BY TEXTURE</h2>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <!-- Glossy -->
+                    <div class="bg-card-bg rounded-2xl p-6 border border-white/5 hover:border-slime-green/50 transition-all hover:-translate-y-2">
+                        <div class="w-12 h-12 rounded-full bg-slime-green/20 flex items-center justify-center mb-4">
+                            <i class="fas fa-star text-slime-green text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3" data-key="glossy_title">Glossy Slime</h3>
+                        <p class="text-gray-400 text-sm" data-key="glossy_care">
+                            Add a few drops of glycerin to restore shine. Avoid over-activating as it reduces glossiness.
+                        </p>
+                    </div>
+                    
+                    <!-- Butter -->
+                    <div class="bg-card-bg rounded-2xl p-6 border border-white/5 hover:border-slime-blue/50 transition-all hover:-translate-y-2">
+                        <div class="w-12 h-12 rounded-full bg-slime-blue/20 flex items-center justify-center mb-4">
+                            <i class="fas fa-cube text-slime-blue text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3" data-key="butter_title">Butter Slime</h3>
+                        <p class="text-gray-400 text-sm" data-key="butter_care">
+                            Knead regularly to maintain soft, spreadable texture. Add lotion if it becomes too stiff.
+                        </p>
+                    </div>
+                    
+                    <!-- Fluffy -->
+                    <div class="bg-card-bg rounded-2xl p-6 border border-white/5 hover:border-slime-white/50 transition-all hover:-translate-y-2">
+                        <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center mb-4">
+                            <i class="fas fa-cloud text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3" data-key="fluffy_title">Fluffy Slime</h3>
+                        <p class="text-gray-400 text-sm" data-key="fluffy_care">
+                            Don't over-knead or it will deflate. Store with extra space in container to preserve volume.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FAQ Section -->
+            <section class="care-card" style="animation-delay: 0.6s;">
+                <h2 class="text-4xl font-display font-bold text-center mb-12" data-key="faq_title">COMMON QUESTIONS</h2>
+                <div class="space-y-4 max-w-3xl mx-auto">
+                    <div class="bg-card-bg rounded-xl border border-white/5 overflow-hidden">
+                        <button class="w-full px-6 py-4 flex justify-between items-center text-left hover:bg-white/5 transition-colors" onclick="toggleFaq(this)">
+                            <span class="font-bold" data-key="faq1_q">My slime is too sticky. What do I do?</span>
+                            <i class="fas fa-chevron-down transition-transform"></i>
+                        </button>
+                        <div class="hidden px-6 pb-4 text-gray-400" data-key="faq1_a">
+                            Add a small amount of activator (borax solution or contact lens solution with baking soda) and knead until it reaches the desired consistency. Add gradually to avoid over-activating.
+                        </div>
+                    </div>
+                    
+                    <div class="bg-card-bg rounded-xl border border-white/5 overflow-hidden">
+                        <button class="w-full px-6 py-4 flex justify-between items-center text-left hover:bg-white/5 transition-colors" onclick="toggleFaq(this)">
+                            <span class="font-bold" data-key="faq2_q">How long does slime last?</span>
+                            <i class="fas fa-chevron-down transition-transform"></i>
+                        </button>
+                        <div class="hidden px-6 pb-4 text-gray-400" data-key="faq2_a">
+                            With proper care, slime can last 3-6 months. Glossy slimes may start to dull after 2-3 months, while butter and fluffy textures can last longer with regular maintenance.
+                        </div>
+                    </div>
+                    
+                    <div class="bg-card-bg rounded-xl border border-white/5 overflow-hidden">
+                        <button class="w-full px-6 py-4 flex justify-between items-center text-left hover:bg-white/5 transition-colors" onclick="toggleFaq(this)">
+                            <span class="font-bold" data-key="faq3_q">Can I fix dried out slime?</span>
+                            <i class="fas fa-chevron-down transition-transform"></i>
+                        </button>
+                        <div class="hidden px-6 pb-4 text-gray-400" data-key="faq3_a">
+                            Yes! Add warm water gradually and knead thoroughly. For severely dried slime, you may need to add both water and a drop of lotion. Be patient and knead for several minutes.
+                        </div>
+                    </div>
+                    
+                    <div class="bg-card-bg rounded-xl border border-white/5 overflow-hidden">
+                        <button class="w-full px-6 py-4 flex justify-between items-center text-left hover:bg-white/5 transition-colors" onclick="toggleFaq(this)">
+                            <span class="font-bold" data-key="faq4_q">Is slime safe for children?</span>
+                            <i class="fas fa-chevron-down transition-transform"></i>
+                        </button>
+                        <div class="hidden px-6 pb-4 text-gray-400" data-key="faq4_a">
+                            All SLIME123 products are non-toxic and safe for children 3+. However, adult supervision is recommended for younger children. Do not ingest and wash hands after play.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- CTA Section -->
+    <section class="py-20 px-6 bg-gradient-to-r from-slime-green/10 via-slime-blue/10 to-slime-purple/10 border-y border-white/10">
+        <div class="container mx-auto text-center max-w-2xl">
+            <h2 class="text-3xl md:text-4xl font-display font-bold mb-6" data-key="cta_title">Ready to Play?</h2>
+            <p class="text-gray-400 mb-8" data-key="cta_desc">
+                Now that you know how to care for your slime, explore our collection and find your perfect texture.
+            </p>
+            <a href="index.html#shop" class="inline-block group relative px-8 py-4 bg-white text-black font-bold rounded-full overflow-hidden hover-trigger" data-cursor="hover">
+                <span class="relative z-10 group-hover:text-white transition-colors duration-300" data-key="cta_button">SHOP NOW</span>
+                <div class="absolute inset-0 bg-slime-green transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 ease-out"></div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black border-t border-white/10 pt-20 pb-10 px-6">
+        <div class="container mx-auto">
+            <div class="grid md:grid-cols-4 gap-12 mb-16">
+                <div class="col-span-1 md:col-span-2">
+                    <div class="text-4xl font-display font-bold mb-6">SLIME123.</div>
+                    <p class="text-gray-400 max-w-sm mb-8" data-key="footer_desc">Redefining sensory play through high-quality, artisan slimes. Made with love and a little bit of science. Exclusively serving Ploiesti with free shipping.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-slime-green hover:text-black transition-all"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-slime-green hover:text-black transition-all"><i class="fab fa-tiktok"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-slime-green hover:text-black transition-all"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-6 text-slime-green" data-key="footer_shop">SHOP</h4>
+                    <ul class="space-y-4 text-gray-400">
+                        <li><a href="index.html#shop" class="hover:text-white transition-colors" data-key="footer_all">All Slimes</a></li>
+                        <li><a href="index.html#shop" class="hover:text-white transition-colors" data-key="footer_best">Best Sellers</a></li>
+                        <li><a href="index.html#shop" class="hover:text-white transition-colors" data-key="footer_new">New Arrivals</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-6 text-slime-green" data-key="footer_help">HELP</h4>
+                    <ul class="space-y-4 text-gray-400">
+                        <li><span class="text-white" data-key="footer_shipping">Free Shipping to Ploiesti Only</span></li>
+                        <li><a href="mailto:business.slime123@hotmail.com" class="hover:text-white transition-colors">business.slime123@hotmail.com</a></li>
+                        <li><a href="care.html" class="text-slime-green hover:text-white transition-colors" data-key="footer_care">Care Guide</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
+                <p>&copy; 2024 SLIME123 Slime Studio. <span data-key="rights">All rights reserved.</span></p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <span class="text-slime-green"><i class="fas fa-map-marker-alt mr-1"></i> Ploiesti, Romania</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- Translations ---
+        const translations = {
+            en: {
+                nav_shop: "Shop",
+                nav_textures: "Textures",
+                nav_care: "Care Guide",
+                care_hero_title: "SLIME CARE\nGUIDE",
+                care_hero_desc: "Learn how to keep your slime fresh, stretchy, and satisfying for months to come. Proper care extends the life of your sensory experience.",
+                tip_temp: "Room Temperature",
+                tip_clean: "Clean Hands",
+                tip_airtight: "Airtight Container",
+                tip_hydration: "Stay Hydrated",
+                storage_title: "PROPER STORAGE",
+                storage_desc: "Always keep your slime in an airtight container when not in use. Exposure to air will cause it to dry out and lose its stretchy texture. Store at room temperature away from direct sunlight.",
+                storage_tip: "<i class='fas fa-lightbulb text-slime-yellow mr-2'></i><strong>Pro Tip:</strong> Use the original container or a similar airtight jar. Avoid plastic bags as they can leak air over time.",
+                hydration_title: "REHYDRATION",
+                hydration_desc: "If your slime becomes stiff or sticky, it's time to rehydrate. Add a few drops of warm water or slime activator and knead thoroughly until the desired consistency returns.",
+                hydration_tip: "<i class='fas fa-lightbulb text-slime-yellow mr-2'></i><strong>Pro Tip:</strong> Start with 2-3 drops and add more as needed. Too much water can make slime runny.",
+                cleaning_title: "CLEAN HANDS, CLEAN SLIME",
+                cleaning_desc: "Always wash and dry your hands before playing with slime. Dirt, lint, and oils from your skin can contaminate the slime and affect its texture. This also prevents bacteria growth.",
+                cleaning_warning: "<i class='fas fa-exclamation-triangle text-red-400 mr-2'></i><strong>Warning:</strong> Never play with slime if your hands are dirty or greasy. It can ruin the slime permanently.",
+                temp_title: "TEMPERATURE MATTERS",
+                temp_desc: "Keep slime at room temperature (18-22°C). Extreme heat can melt it, while cold temperatures can make it hard and brittle. Never leave slime in a car or near heating sources.",
+                temp_tip: "<i class='fas fa-lightbulb text-slime-yellow mr-2'></i><strong>Pro Tip:</strong> If slime gets too cold, let it warm up to room temperature before playing. Don't microwave!",
+                texture_care_title: "CARE BY TEXTURE",
+                glossy_title: "Glossy Slime",
+                glossy_care: "Add a few drops of glycerin to restore shine. Avoid over-activating as it reduces glossiness.",
+                butter_title: "Butter Slime",
+                butter_care: "Knead regularly to maintain soft, spreadable texture. Add lotion if it becomes too stiff.",
+                fluffy_title: "Fluffy Slime",
+                fluffy_care: "Don't over-knead or it will deflate. Store with extra space in container to preserve volume.",
+                faq_title: "COMMON QUESTIONS",
+                faq1_q: "My slime is too sticky. What do I do?",
+                faq1_a: "Add a small amount of activator (borax solution or contact lens solution with baking soda) and knead until it reaches the desired consistency. Add gradually to avoid over-activating.",
+                faq2_q: "How long does slime last?",
+                faq2_a: "With proper care, slime can last 3-6 months. Glossy slimes may start to dull after 2-3 months, while butter and fluffy textures can last longer with regular maintenance.",
+                faq3_q: "Can I fix dried out slime?",
+                faq3_a: "Yes! Add warm water gradually and knead thoroughly. For severely dried slime, you may need to add both water and a drop of lotion. Be patient and knead for several minutes.",
+                faq4_q: "Is slime safe for children?",
+                faq4_a: "All SLIME123 products are non-toxic and safe for children 3+. However, adult supervision is recommended for younger children. Do not ingest and wash hands after play.",
+                cta_title: "Ready to Play?",
+                cta_desc: "Now that you know how to care for your slime, explore our collection and find your perfect texture.",
+                cta_button: "SHOP NOW",
+                footer_desc: "Redefining sensory play through high-quality, artisan slimes. Made with love and a little bit of science. Exclusively serving Ploiesti with free shipping.",
+                footer_shop: "SHOP",
+                footer_help: "HELP",
+                footer_all: "All Slimes",
+                footer_best: "Best Sellers",
+                footer_new: "New Arrivals",
+                footer_shipping: "Free Shipping to Ploiesti Only",
+                footer_care: "Care Guide",
+                rights: "All rights reserved."
+            },
+            ro: {
+                nav_shop: "Magazin",
+                nav_textures: "Texturi",
+                nav_care: "Ghid Îngrijire",
+                care_hero_title: "GHID ÎNGRIJIRE\nSLIME",
+                care_hero_desc: "Învață cum să păstrezi slime-ul proaspăt, elastic și satisfăcător pentru lunile următoare. Îngrijirea corectă prelungește viața experienței tale senzoriale.",
+                tip_temp: "Temperatura Camerei",
+                tip_clean: "Mâini Curate",
+                tip_airtight: "Recipient Etanș",
+                tip_hydration: "Rămâi Hidratat",
+                storage_title: "DEPOZITARE CORECTĂ",
+                storage_desc: "Păstrează întotdeauna slime-ul într-un recipient etanș când nu este folosit. Expunerea la aer îl va usca și îi va pierde textura elastică. Depozitează la temperatura camerei, ferit de lumina directă a soarelui.",
+                storage_tip: "<i class='fas fa-lightbulb text-slime-yellow mr-2'></i><strong>Sfat Pro:</strong> Folosește recipientul original sau un borcan etanș similar. Evită pungile de plastic deoarece pot lăsa aer să treacă în timp.",
+                hydration_title: "REHIDRATARE",
+                hydration_desc: "Dacă slime-ul devine rigid sau lipicios, este timpul să îl rehidratezi. Adaugă câteva picături de apă caldă sau activator de slime și frământă bine până când consistența dorită revine.",
+                hydration_tip: "<i class='fas fa-lightbulb text-slime-yellow mr-2'></i><strong>Sfat Pro:</strong> Începe cu 2-3 picături și adaugă mai mult după cum este necesar. Prea multă apă poate face slime-ul apos.",
+                cleaning_title: "MÂINI CURATE, SLIME CURAT",
+                cleaning_desc: "Spală-ți și usucă-ți întotdeauna mâinile înainte de a te juca cu slime. Murdăria, scamele și uleiurile de pe piele pot contamina slime-ul și pot afecta textura. Acest lucru previne și creșterea bacteriilor.",
+                cleaning_warning: "<i class='fas fa-exclamation-triangle text-red-400 mr-2'></i><strong>Atenție:</strong> Nu te juca niciodată cu slime dacă mâinile tale sunt murdare sau grase. Poate distruge slime-ul permanent.",
+                temp_title: "TEMPERATURA CONTEAZĂ",
+                temp_desc: "Păstrează slime-ul la temperatura camerei (18-22°C). Căldura extremă îl poate topi, în timp ce temperaturile reci îl pot face dur și fragil. Nu lăsa niciodată slime într-o mașină sau lângă surse de căldură.",
+                temp_tip: "<i class='fas fa-lightbulb text-slime-yellow mr-2'></i><strong>Sfat Pro:</strong> Dacă slime-ul devine prea rece, lasă-l să se încălzească la temperatura camerei înainte de a te juca. Nu îl pune la microunde!",
+                texture_care_title: "ÎNGRIJIRE PE TEXTURI",
+                glossy_title: "Slime Lucios",
+                glossy_care: "Adaugă câteva picături de glicerină pentru a restabili luciul. Evită supra-activarea deoarece reduce luciul.",
+                butter_title: "Slime Unt",
+                butter_care: "Frământă regulat pentru a menține textura moale și întinsă. Adaugă loțiune dacă devine prea rigid.",
+                fluffy_title: "Slime Pufos",
+                fluffy_care: "Nu frământa excesiv sau se va dezumfla. Depozitează cu spațiu suplimentar în recipient pentru a păstra volumul.",
+                faq_title: "ÎNTREBĂRI FRECVENTE",
+                faq1_q: "Slime-ul meu este prea lipicios. Ce fac?",
+                faq1_a: "Adaugă o cantitate mică de activator (soluție de borax sau soluție pentru lentile de contact cu bicarbonat) și frământă până când atinge consistența dorită. Adaugă treptat pentru a evita supra-activarea.",
+                faq2_q: "Cât timp rezistă slime-ul?",
+                faq2_a: "Cu îngrijire corespunzătoare, slime-ul poate rezista 3-6 luni. Slime-urile lucioase pot începe să se estompeze după 2-3 luni, în timp ce texturile de unt și pufos pot rezista mai mult cu întreținere regulată.",
+                faq3_q: "Pot repara un slime uscat?",
+                faq3_a: "Da! Adaugă apă caldă treptat și frământă bine. Pentru slime-ul sever uscat, poate fi necesar să adaugi atât apă cât și o picătură de loțiune. Fii răbdător și frământă câteva minute.",
+                faq4_q: "Este slime-ul sigur pentru copii?",
+                faq4_a: "Toate produsele SLIME123 sunt non-toxice și sigure pentru copii 3+. Cu toate acestea, se recomandă supravegherea adultă pentru copiii mai mici. Nu ingera și spală-te pe mâini după joacă.",
+                cta_title: "Gata de Joacă?",
+                cta_desc: "Acum că știi cum să îți îngrijești slime-ul, explorează colecția noastră și găsește textura perfectă pentru tine.",
+                cta_button: "CUMPĂRĂ ACUM",
+                footer_desc: "Redefinim joaca senzorială prin slime-uri artizanale de înaltă calitate. Făcute cu dragoste și puțină știință. Servim exclusiv Ploiești cu livrare gratuită.",
+                footer_shop: "MAGAZIN",
+                footer_help: "AJUTOR",
+                footer_all: "Toate Slime-urile",
+                footer_best: "Cele Mai Vândute",
+                footer_new: "Nou Sosite",
+                footer_shipping: "Livrare Gratuită doar în Ploiești",
+                footer_care: "Ghid Îngrijire",
+                rights: "Toate drepturile rezervate."
+            }
+        };
+
+        let currentLang = 'en';
+        const exchangeRate = 4;
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            initCustomCursor();
+            updateLanguage();
+        });
+
+        // --- Language Toggle ---
+        function toggleLanguage() {
+            const toggle = document.getElementById('lang-toggle');
+            const labelEn = document.getElementById('lang-label-en');
+            const labelRo = document.getElementById('lang-label-ro');
+            const slider = toggle.querySelector('.toggle-slider');
+            
+            currentLang = currentLang === 'en' ? 'ro' : 'en';
+            
+            if (currentLang === 'ro') {
+                toggle.classList.add('active');
+                labelEn.style.opacity = '0.5';
+                labelRo.style.opacity = '1';
+                slider.innerText = 'RON';
+            } else {
+                toggle.classList.remove('active');
+                labelEn.style.opacity = '1';
+                labelRo.style.opacity = '0.5';
+                slider.innerText = '$';
+            }
+            
+            updateLanguage();
+        }
+
+        function updateLanguage() {
+            const t = translations[currentLang];
+            
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (t[key]) {
+                    if (key === 'care_hero_title') {
+                        el.innerHTML = t[key].replace('\n', '<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-slime-green via-slime-blue to-slime-purple">') + '</span>';
+                    } else if (key.includes('_tip') || key.includes('_warning')) {
+                        el.innerHTML = t[key];
+                    } else {
+                        el.innerText = t[key];
+                    }
+                }
+            });
+        }
+
+        // --- Custom Cursor Logic ---
+        function initCustomCursor() {
+            const cursor = document.getElementById('cursor');
+            const follower = document.getElementById('cursor-follower');
+            
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+                
+                setTimeout(() => {
+                    follower.style.left = e.clientX - 10 + 'px';
+                    follower.style.top = e.clientY - 10 + 'px';
+                }, 50);
+            });
+
+            const triggers = document.querySelectorAll('.hover-trigger');
+            triggers.forEach(trigger => {
+                trigger.addEventListener('mouseenter', () => {
+                    cursor.style.transform = 'scale(2)';
+                    follower.style.transform = 'scale(0.5)';
+                });
+                
+                trigger.addEventListener('mouseleave', () => {
+                    cursor.style.transform = 'scale(1)';
+                    follower.style.transform = 'scale(1)';
+                });
+            });
+        }
+
+        // --- FAQ Toggle ---
+        function toggleFaq(button) {
+            const answer = button.nextElementSibling;
+            const icon = button.querySelector('i');
+            
+            if (answer.classList.contains('hidden')) {
+                answer.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                answer.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+    </script>
+</body>
+</html>
